@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { RouterView } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import { useAuth } from './composables/useAuth'
 import ToastNotification from './components/ToastNotification.vue'
 
-const { fetchCurrentUser } = useAuth()
+const router = useRouter()
+const { token, fetchCurrentUser, logout } = useAuth()
 
 onMounted(async () => {
+  if (!token.value) return
   try {
     await fetchCurrentUser()
   } catch {
-    // No valid token — user will be redirected to login by the router guard
+    logout()
+    router.push('/login')
   }
 })
 </script>

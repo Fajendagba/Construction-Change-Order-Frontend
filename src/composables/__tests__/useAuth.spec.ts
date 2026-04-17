@@ -89,9 +89,7 @@ describe('useAuth', () => {
 
   it('fetchCurrentUser sets user from /me endpoint', async () => {
     mockedGet.mockResolvedValueOnce({
-      data: {
-        data: { id: '1', name: 'Sarah', email: 'sarah@test.com', role: 'owner' as const },
-      },
+      data: { id: '1', name: 'Sarah', email: 'sarah@test.com', role: 'owner' as const },
     })
 
     const { fetchCurrentUser, user } = useAuth()
