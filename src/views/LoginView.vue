@@ -12,9 +12,9 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 
 const demoUsers = [
-  { label: 'Login as Owner (Sarah)', email: 'sarah@example.com', password: 'password' },
-  { label: 'Login as Contractor (Mike)', email: 'mike@example.com', password: 'password' },
-  { label: 'Login as Architect (Emily)', email: 'emily@example.com', password: 'password' },
+  { label: 'Login as Owner (Sarah)', email: 'owner@ingenious.build', password: 'password' },
+  { label: 'Login as Contractor (Mike)', email: 'contractor@ingenious.build', password: 'password' },
+  { label: 'Login as Architect (Emily)', email: 'owner@ingenious.build', password: 'password' },
 ]
 
 onMounted(() => {

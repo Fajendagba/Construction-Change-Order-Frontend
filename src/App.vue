@@ -1,11 +1,21 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
+import { useAuth } from './composables/useAuth'
+import ToastNotification from './components/ToastNotification.vue'
+
+const { fetchCurrentUser } = useAuth()
+
+onMounted(async () => {
+  try {
+    await fetchCurrentUser()
+  } catch {
+    // No valid token — user will be redirected to login by the router guard
+  }
+})
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <RouterView />
+  <ToastNotification />
 </template>
-
-<style scoped></style>
