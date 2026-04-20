@@ -14,7 +14,7 @@ const error = ref<string | null>(null)
 const demoUsers = [
   { label: 'Login as Owner (Nick)', email: 'owner@ingenious.build', password: 'password' },
   { label: 'Login as Contractor (Michał)', email: 'contractor@ingenious.build', password: 'password' },
-  { label: 'Login as Architect (Eli)', email: 'owner@ingenious.build', password: 'password' },
+  { label: 'Login as Architect (Eli)', email: 'architect@ingenious.build', password: 'password' },
 ]
 
 onMounted(() => {
