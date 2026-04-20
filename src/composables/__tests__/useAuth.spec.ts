@@ -23,17 +23,17 @@ describe('useAuth', () => {
   it('sets user and stores token on successful login', async () => {
     const mockResponse = {
       data: {
-        user: { id: '1', name: 'Mike', email: 'mike@test.com', role: 'contractor' as const },
+        user: { id: '1', name: 'Michał', email: 'Michał@test.com', role: 'contractor' as const },
         token: 'test-token-123',
       },
     }
     mockedPost.mockResolvedValueOnce(mockResponse)
 
     const { login, user } = useAuth()
-    await login('mike@test.com', 'password')
+    await login('Michał@test.com', 'password')
 
     expect(mockedPost).toHaveBeenCalledWith('/login', {
-      email: 'mike@test.com',
+      email: 'Michał@test.com',
       password: 'password',
     })
     expect(user.value).toEqual(mockResponse.data.user)
@@ -52,14 +52,14 @@ describe('useAuth', () => {
   it('clears user and token on logout', async () => {
     const mockResponse = {
       data: {
-        user: { id: '1', name: 'Mike', email: 'mike@test.com', role: 'contractor' as const },
+        user: { id: '1', name: 'Michał', email: 'Michał@test.com', role: 'contractor' as const },
         token: 'test-token-123',
       },
     }
     mockedPost.mockResolvedValueOnce(mockResponse)
 
     const { login, logout, user } = useAuth()
-    await login('mike@test.com', 'password')
+    await login('Michał@test.com', 'password')
 
     logout()
 
@@ -70,14 +70,14 @@ describe('useAuth', () => {
   it('isAuthenticated is true when user is set', async () => {
     const mockResponse = {
       data: {
-        user: { id: '1', name: 'Mike', email: 'mike@test.com', role: 'contractor' as const },
+        user: { id: '1', name: 'Michał', email: 'Michał@test.com', role: 'contractor' as const },
         token: 'test-token-123',
       },
     }
     mockedPost.mockResolvedValueOnce(mockResponse)
 
     const { login, isAuthenticated } = useAuth()
-    await login('mike@test.com', 'password')
+    await login('Michał@test.com', 'password')
 
     expect(isAuthenticated.value).toBe(true)
   })
@@ -89,7 +89,7 @@ describe('useAuth', () => {
 
   it('fetchCurrentUser sets user from /me endpoint', async () => {
     mockedGet.mockResolvedValueOnce({
-      data: { id: '1', name: 'Sarah', email: 'sarah@test.com', role: 'owner' as const },
+      data: { id: '1', name: 'Nick', email: 'Nick@test.com', role: 'owner' as const },
     })
 
     const { fetchCurrentUser, user } = useAuth()
@@ -98,8 +98,8 @@ describe('useAuth', () => {
     expect(mockedGet).toHaveBeenCalledWith('/me')
     expect(user.value).toEqual({
       id: '1',
-      name: 'Sarah',
-      email: 'sarah@test.com',
+      name: 'Nick',
+      email: 'Nick@test.com',
       role: 'owner',
     })
   })
