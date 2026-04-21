@@ -101,8 +101,8 @@ onUnmounted(() => {
           <StateBadge :state="currentChangeOrder.state" />
         </div>
 
-        <div class="grid grid-cols-3 gap-6 mb-6">
-          <div class="col-span-2 space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div class="lg:col-span-2 space-y-4">
             <div class="bg-white rounded-lg shadow-sm p-6">
               <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                 Description
@@ -121,7 +121,7 @@ onUnmounted(() => {
               <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
                 Cost Breakdown
               </h2>
-              <div class="grid grid-cols-3 gap-4">
+              <div class="grid grid-cols-3 gap-2">
                 <div>
                   <p class="text-xs text-gray-500 mb-1">Labor</p>
                   <p class="text-base font-semibold text-gray-900">

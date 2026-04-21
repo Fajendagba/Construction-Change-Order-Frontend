@@ -23,6 +23,7 @@ const totals = computed(() => ({
       <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Budget Summary</h3>
     </div>
 
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
       <thead>
         <tr class="bg-gray-50 border-b border-gray-200">
@@ -84,5 +85,6 @@ const totals = computed(() => ({
         </tr>
       </tfoot>
     </table>
+    </div>
   </div>
 </template>
