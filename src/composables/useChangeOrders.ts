@@ -16,6 +16,7 @@ interface UseChangeOrders {
   fetchChangeOrders: (projectId: string) => Promise<void>
   fetchChangeOrder: (projectId: string, changeOrderId: string) => Promise<void>
   createChangeOrder: (projectId: string, payload: CreateChangeOrderPayload) => Promise<ChangeOrder>
+  updateChangeOrder: (projectId: string, changeOrderId: string, payload: Partial<CreateChangeOrderPayload>) => Promise<ChangeOrder>
   transitionChangeOrder: (projectId: string, changeOrderId: string, payload: TransitionPayload) => Promise<ChangeOrder>
   fetchAuditLogs: (projectId: string, changeOrderId: string) => Promise<AuditLog[]>
 }
@@ -88,6 +89,31 @@ export function useChangeOrders(): UseChangeOrders {
     }
   }
 
+  async function updateChangeOrder(
+    projectId: string,
+    changeOrderId: string,
+    payload: Partial<CreateChangeOrderPayload>,
+  ): Promise<ChangeOrder> {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await apiClient.patch<ApiResponse<ChangeOrder>>(
+        `/projects/${projectId}/change-orders/${changeOrderId}`,
+        payload,
+      )
+      return response.data.data
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      } else {
+        error.value = 'Failed to update change order'
+      }
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function transitionChangeOrder(
     projectId: string,
     changeOrderId: string,
@@ -131,6 +157,7 @@ export function useChangeOrders(): UseChangeOrders {
     fetchChangeOrders,
     fetchChangeOrder,
     createChangeOrder,
+    updateChangeOrder,
     transitionChangeOrder,
     fetchAuditLogs,
   }

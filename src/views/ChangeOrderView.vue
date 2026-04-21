@@ -9,6 +9,7 @@ import AppHeader from '../components/AppHeader.vue'
 import StateBadge from '../components/StateBadge.vue'
 import StateTransitionButtons from '../components/StateTransitionButtons.vue'
 import AuditTimeline from '../components/AuditTimeline.vue'
+import ChangeOrderEditForm from '../components/ChangeOrderEditForm.vue'
 import type { ChangeOrder, AuditLog, RealtimeChangeOrderEvent } from '../types'
 
 const router = useRouter()
@@ -22,6 +23,7 @@ const projectId = route.params.projectId as string
 const changeOrderId = route.params.changeOrderId as string
 
 const auditLogs = ref<AuditLog[]>([])
+const showEditForm = ref(false)
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
@@ -55,6 +57,12 @@ function handleTransitioned(updatedChangeOrder: ChangeOrder): void {
     auditLogs.value = [...updatedChangeOrder.audit_logs].reverse()
   }
   show(`Change order ${updatedChangeOrder.state.replace('_', ' ')}.`, 'success')
+}
+
+function handleUpdated(updatedChangeOrder: ChangeOrder): void {
+  currentChangeOrder.value = updatedChangeOrder
+  showEditForm.value = false
+  show('Change order updated.', 'success')
 }
 
 const heading = computed((): string => {
@@ -103,82 +111,101 @@ onUnmounted(() => {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div class="lg:col-span-2 space-y-4">
-            <div class="bg-white rounded-lg shadow-sm p-6">
-              <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                Description
-              </h2>
-              <p class="text-sm text-gray-700">{{ currentChangeOrder.description }}</p>
-            </div>
+            <ChangeOrderEditForm
+              v-if="showEditForm"
+              :change-order="currentChangeOrder"
+              :project-id="projectId"
+              @updated="handleUpdated"
+              @cancel="showEditForm = false"
+            />
 
-            <div class="bg-white rounded-lg shadow-sm p-6">
-              <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                Reason for Change
-              </h2>
-              <p class="text-sm text-gray-700">{{ currentChangeOrder.reason }}</p>
-            </div>
+            <template v-else>
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between mb-2">
+                  <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    Description
+                  </h2>
+                  <button
+                    v-if="currentChangeOrder.state === 'draft' && user?.role === 'contractor' && currentChangeOrder.submitted_by?.id === user?.id"
+                    class="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                    @click="showEditForm = true"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <p class="text-sm text-gray-700">{{ currentChangeOrder.description }}</p>
+              </div>
 
-            <div class="bg-white rounded-lg shadow-sm p-6">
-              <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                Cost Breakdown
-              </h2>
-              <div class="grid grid-cols-3 gap-2">
-                <div>
-                  <p class="text-xs text-gray-500 mb-1">Labor</p>
-                  <p class="text-base font-semibold text-gray-900">
-                    {{ formatCurrency(currentChangeOrder.labor_cost) }}
-                  </p>
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  Reason for Change
+                </h2>
+                <p class="text-sm text-gray-700">{{ currentChangeOrder.reason }}</p>
+              </div>
+
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                  Cost Breakdown
+                </h2>
+                <div class="grid grid-cols-3 gap-2">
+                  <div>
+                    <p class="text-xs text-gray-500 mb-1">Labor</p>
+                    <p class="text-base font-semibold text-gray-900">
+                      {{ formatCurrency(currentChangeOrder.labor_cost) }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 mb-1">Material</p>
+                    <p class="text-base font-semibold text-gray-900">
+                      {{ formatCurrency(currentChangeOrder.material_cost) }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 mb-1">Total</p>
+                    <p class="text-base font-bold text-gray-900">
+                      {{ formatCurrency(currentChangeOrder.total_cost) }}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p class="text-xs text-gray-500 mb-1">Material</p>
-                  <p class="text-base font-semibold text-gray-900">
-                    {{ formatCurrency(currentChangeOrder.material_cost) }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 mb-1">Total</p>
-                  <p class="text-base font-bold text-gray-900">
-                    {{ formatCurrency(currentChangeOrder.total_cost) }}
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                  <p class="text-xs text-gray-500">
+                    Cost Code: <span class="font-mono text-gray-700">{{ currentChangeOrder.cost_code }}</span>
                   </p>
                 </div>
               </div>
-              <div class="mt-4 pt-4 border-t border-gray-100">
-                <p class="text-xs text-gray-500">
-                  Cost Code: <span class="font-mono text-gray-700">{{ currentChangeOrder.cost_code }}</span>
+
+              <div class="bg-white rounded-lg shadow-sm p-6 text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Submitted By</p>
+                    <p class="text-gray-700 font-medium">
+                      {{ currentChangeOrder.submitted_by?.name ?? '—' }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                      {{ formatDate(currentChangeOrder.state_changed_at) }}
+                    </p>
+                  </div>
+                  <div v-if="currentChangeOrder.reviewed_by">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Reviewed By</p>
+                    <p class="text-gray-700 font-medium">{{ currentChangeOrder.reviewed_by.name }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-if="currentChangeOrder.state === 'rejected' && currentChangeOrder.rejection_reason"
+                class="bg-red-50 border border-red-200 rounded-lg p-4"
+              >
+                <p class="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">
+                  Rejection Reason
                 </p>
+                <p class="text-sm text-red-700">{{ currentChangeOrder.rejection_reason }}</p>
               </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-sm p-6 text-sm">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Submitted By</p>
-                  <p class="text-gray-700 font-medium">
-                    {{ currentChangeOrder.submitted_by?.name ?? '—' }}
-                  </p>
-                  <p class="text-xs text-gray-400 mt-0.5">
-                    {{ formatDate(currentChangeOrder.state_changed_at) }}
-                  </p>
-                </div>
-                <div v-if="currentChangeOrder.reviewed_by">
-                  <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Reviewed By</p>
-                  <p class="text-gray-700 font-medium">{{ currentChangeOrder.reviewed_by.name }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              v-if="currentChangeOrder.state === 'rejected' && currentChangeOrder.rejection_reason"
-              class="bg-red-50 border border-red-200 rounded-lg p-4"
-            >
-              <p class="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">
-                Rejection Reason
-              </p>
-              <p class="text-sm text-red-700">{{ currentChangeOrder.rejection_reason }}</p>
-            </div>
+            </template>
           </div>
 
           <div class="col-span-1">
-            <div class="bg-white rounded-lg shadow-sm p-6">
+            <div v-show="!showEditForm" class="bg-white rounded-lg shadow-sm p-6">
               <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
                 Actions
               </h2>
