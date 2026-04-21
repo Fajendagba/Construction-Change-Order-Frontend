@@ -17,7 +17,6 @@ Vue 3 + TypeScript frontend for the Construction Change Order Engine. Role-based
 
 ## Requirements
 
-- Node.js 18+
 - Backend API running on `http://localhost:8000`
 - Laravel Reverb running on `http://localhost:8081`
 
