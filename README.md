@@ -1,42 +1,65 @@
-# change-order-frontend
+# Construction Change Order Engine — Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue 3 + TypeScript frontend for the Construction Change Order Engine. Role-based UI with real-time updates via Laravel Reverb WebSockets.
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Tech Stack
 
-## Recommended Browser Setup
+- **Vue 3** — Composition API with `<script setup>` syntax
+- **TypeScript** — strict typing throughout
+- **Tailwind CSS** — utility-first styling
+- **Axios** — HTTP client with auth interceptor
+- **Laravel Echo + Pusher JS** — WebSocket client for real-time updates
+- **Vitest** — unit testing for composables
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Type Support for `.vue` Imports in TS
+## Requirements
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Node.js 18+
+- Backend API running on `http://localhost:8000`
+- Laravel Reverb running on `http://localhost:8081`
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Setup
 
-## Project Setup
-
-```sh
+```bash
+git clone https://github.com/Fajendagba/Construction-Change-Order-Frontend.git
+cd change-order-frontend
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+cp .env.example .env
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The app runs on `http://localhost:5173`.
 
-```sh
-npm run build
+---
+
+## Environment Variables
+
+```env
+VITE_API_URL=http://localhost:8000/api
+VITE_REVERB_APP_KEY=local-key
+VITE_REVERB_HOST=localhost
+VITE_REVERB_PORT=8081
+```
+
+---
+
+## Demo Credentials
+
+| Name | Email | Password | Role |
+|------|-------|----------|------|
+| Nick Carter | owner@ingenious.build | password | Owner |
+| Michał Sączek | contractor@ingenious.build | password | Contractor |
+| Eli Rattner | architect@ingenious.build | password | Architect |
+
+---
+
+## Running Tests
+
+```bash
+npm run test
 ```
